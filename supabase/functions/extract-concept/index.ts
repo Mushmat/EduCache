@@ -29,7 +29,19 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `You are a knowledge extraction engine. Given a user's question about a concept, extract structured knowledge about that concept. You MUST respond by calling the extract_concept function with the structured data. Be thorough but concise.`;
+  const systemPrompt = `You are a knowledge extraction engine for a learning cache.
+  Given a user's question about a concept, extract structured knowledge about that concept
+  AND list a few closely related sub-concepts or sibling concepts.
+
+  You MUST respond by calling the extract_concept function with the structured data.
+
+  Guidelines:
+  - "topic" should be the main concept name in lowercase (e.g. "triangle").
+  - "definition" should be 1–3 sentences, student friendly.
+  - "relatedTopics" should be 3–6 short concept names that a student should also learn
+    right after this one (e.g. for "triangle": "right triangle", "acute triangle",
+    "obtuse triangle", "scalene triangle").
+  - Use simple, curriculum-like terms that can be stored as separate concepts later.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -52,20 +64,64 @@ serve(async (req) => {
               parameters: {
                 type: "object",
                 properties: {
-                  topic: { type: "string", description: "The main topic/concept name (lowercase, e.g. 'photosynthesis')" },
-                  definition: { type: "string", description: "Clear definition of the concept" },
-                  inputs: { type: "array", items: { type: "string" }, description: "What inputs/requirements the concept needs" },
-                  outputs: { type: "array", items: { type: "string" }, description: "What outputs/results the concept produces" },
-                  mechanism: { type: "string", description: "How the concept works step by step" },
-                  analogy: { type: "string", description: "A relatable analogy to explain the concept" },
-                  commonMistake: { type: "string", description: "A common misconception about this concept" },
-                  difficultyLevel: { type: "string", enum: ["beginner", "intermediate", "advanced"], description: "How complex this concept is" },
+                  topic: {
+                    type: "string",
+                    description: "The main topic/concept name (lowercase, e.g. 'photosynthesis')"
+                  },
+                  definition: {
+                    type: "string",
+                    description: "Clear definition of the concept"
+                  },
+                  inputs: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "What inputs/requirements the concept needs"
+                  },
+                  outputs: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "What outputs/results the concept produces"
+                  },
+                  mechanism: {
+                    type: "string",
+                    description: "How the concept works step by step"
+                  },
+                  analogy: {
+                    type: "string",
+                    description: "A relatable analogy to explain the concept"
+                  },
+                  commonMistake: {
+                    type: "string",
+                    description: "A common misconception about this concept"
+                  },
+                  difficultyLevel: {
+                    type: "string",
+                    enum: ["beginner", "intermediate", "advanced"],
+                    description: "How complex this concept is"
+                  },
+                  // NEW: related topics
+                  relatedTopics: {
+                    type: "array",
+                    items: { type: "string" },
+                    description:
+                      "3–6 closely related concepts (subtypes, special cases, or sibling ideas) as short names, e.g. 'right triangle', 'acute triangle'"
+                  }
                 },
-                required: ["topic", "definition", "inputs", "outputs", "mechanism", "analogy", "commonMistake", "difficultyLevel"],
-                additionalProperties: false,
-              },
-            },
-          },
+                required: [
+                  "topic",
+                  "definition",
+                  "inputs",
+                  "outputs",
+                  "mechanism",
+                  "analogy",
+                  "commonMistake",
+                  "difficultyLevel"
+                  // relatedTopics is optional so old calls don’t break
+                ],
+                additionalProperties: false
+              }
+            }
+          }
         ],
         tool_choice: { type: "function", function: { name: "extract_concept" } },
       }),

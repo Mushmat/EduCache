@@ -98,8 +98,12 @@ export function ChatInterface() {
         const intent = detectIntent(query);
         const answer = generateAnswer(concept, intent);
         addMessage("assistant", answer);
-        addMessage("system", `✅ Concept "${concept.topic}" learned and cached locally.`);
-      } catch (e) {
+        addMessage(
+          "system",
+          concept.relatedTopics && concept.relatedTopics.length
+            ? `✅ Concept "${concept.topic}" learned with related ideas: ${concept.relatedTopics.join(", ")} — all cached locally.`
+            : `✅ Concept "${concept.topic}" learned and cached locally.`
+        );      } catch (e) {
         addMessage("assistant", e instanceof Error ? e.message : "Could not learn this right now.");
       } finally {
         setIsLoading(false);

@@ -1,4 +1,4 @@
-// Extract topic from user query by matching against stored topics
+// extractTopic.ts
 
 import { getAllTopics } from "./knowledgeStore";
 
@@ -15,14 +15,18 @@ export function extractTopic(query: string): string | null {
   const storedTopics = getAllTopics();
   const lower = query.toLowerCase();
 
-  // Direct match first
+  // Prefer longest direct match (so "right triangle" beats "triangle")
+  let bestMatch: string | null = null;
   for (const topic of storedTopics) {
     if (lower.includes(topic)) {
-      return topic;
+      if (!bestMatch || topic.length > bestMatch.length) {
+        bestMatch = topic;
+      }
     }
   }
+  if (bestMatch) return bestMatch;
 
-  // Try matching individual significant words
+  // Fallback: significant words
   const words = lower
     .replace(/[?!.,;:'"]/g, "")
     .split(/\s+/)
@@ -39,7 +43,6 @@ export function extractTopic(query: string): string | null {
 }
 
 export function extractQuerySubject(query: string): string {
-  // Extract the main subject from query for API call
   const lower = query.toLowerCase().replace(/[?!.,;:'"]/g, "");
   const words = lower.split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
   return words.join(" ") || query.trim();

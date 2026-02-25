@@ -10,6 +10,8 @@ export interface ConceptData {
   commonMistake: string;
   difficultyLevel: string;
   storedAt: string;
+  // NEW: list of closely related concepts (by topic name)
+  relatedTopics?: string[];
 }
 
 const STORAGE_KEY = "knowledge_cache";
