@@ -19,7 +19,7 @@ export function ChatInterface() {
     {
       id: "welcome",
       role: "system",
-      content: "LearnOnce Engine ready. Ask me a concept — I'll learn it online, remember it offline.",
+      content: "EduCache Engine ready. Ask me a concept — I'll learn it online, remember it offline.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -133,7 +133,7 @@ export function ChatInterface() {
     <div className="flex flex-col h-screen max-w-2xl mx-auto border-x border-border">
       {/* Header */}
       <div className="px-4 py-4 border-b border-border">
-        <h1 className="text-lg font-semibold text-primary font-mono">LearnOnce</h1>
+        <h1 className="text-lg font-semibold text-primary font-mono">EduCache</h1>
         <p className="text-xs text-muted-foreground">Learn once online → recall forever offline</p>
       </div>
 
