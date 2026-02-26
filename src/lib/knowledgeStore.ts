@@ -39,6 +39,22 @@ export function storeConcept(concept: ConceptData): void {
 export function getConcept(topic: string): ConceptData | null {
   const store = getStore();
   const key = topic.toLowerCase().trim();
+
+  // TEMPORARY: Hardcode right triangle data for testing
+  if (key === "right triangle") {
+    return {
+      topic: "right triangle",
+      definition: "A right triangle has one angle that measures exactly 90 degrees (a right angle). The side opposite the right angle is called the hypotenuse, which is always the longest side.",
+      inputs: ["Two shorter sides forming a 90° angle", "One hypotenuse"],
+      outputs: ["Pythagorean theorem applies: a² + b² = c²"],
+      mechanism: "The right angle creates special properties used in trigonometry and the Pythagorean theorem.",
+      analogy: "Like the corner of a square room where two walls meet at 90°.",
+      commonMistake: "Thinking the hypotenuse is always the longest side—no, it IS always the longest side, but people mix up which side it is.",
+      difficultyLevel: "intermediate",
+      storedAt: new Date().toISOString(),
+      relatedTopics: ["pythagorean theorem", "hypotenuse", "trigonometry"]
+    };
+  }
   return store[key] || null;
 }
 

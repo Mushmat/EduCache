@@ -63,24 +63,32 @@ function generateTutor(c: ConceptData): string {
   return answer;
 }
 
-// NEW: attach nearby cached concepts
+// KNOWN TOPIC RELATIONSHIPS (fallback when Edge Function doesn't provide)
+const KNOWN_RELATED: Record<string, string[]> = {
+  "triangle": ["right triangle", "acute triangle", "obtuse triangle", "isosceles triangle"],
+  "photosynthesis": ["chloroplast", "chlorophyll", "stomata"],
+  "fraction": ["proper fraction", "improper fraction", "mixed number"],
+  // Add more as needed
+};
+
 function generateRelatedSection(c: ConceptData): string | null {
-  const relatedNames = c.relatedTopics ?? [];
+  // Use stored relatedTopics if present
+  let relatedNames = c.relatedTopics ?? [];
+  
+  // Fallback to known relationships
+  if (!relatedNames.length) {
+    relatedNames = KNOWN_RELATED[c.topic.toLowerCase()] ?? [];
+  }
+  
   if (!relatedNames.length) return null;
 
-  const relatedConcepts: ConceptData[] = [];
-  for (const name of relatedNames) {
-    const rel = getConcept(name);
-    if (rel) relatedConcepts.push(rel);
-  }
-  if (!relatedConcepts.length) return null;
-
   let section = `---\n\n**Related ideas you should know:**\n\n`;
-  for (const rel of relatedConcepts) {
-    section += `- **${capitalize(rel.topic)}**: ${rel.definition}\n`;
+  for (const name of relatedNames) {
+    section += `- **${capitalize(name)}**\n`;
   }
   return section;
 }
+
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);

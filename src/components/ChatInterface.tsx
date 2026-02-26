@@ -57,8 +57,13 @@ export function ChatInterface() {
   );
 
   const handleOnlineQuery = useCallback(
-    async (query: string) => {
-      // Check if already known
+  async (query: string) => {
+    // FORCE online fetch for multi-word topics (right triangle, etc.)
+    const queryWordCount = query.trim().split(/\s+/).length;
+    if (queryWordCount > 3) {
+      // Always learn multi-word concepts online
+    } else {
+      // Only check cache for simple queries
       const existingTopic = extractTopic(query);
       if (existingTopic && hasConceptStored(existingTopic)) {
         const concept = getConcept(existingTopic)!;
@@ -68,6 +73,8 @@ export function ChatInterface() {
         addMessage("system", `ℹ️ Already cached — answered from local store.`);
         return;
       }
+    }
+
 
       setIsLoading(true);
       try {
@@ -90,6 +97,7 @@ export function ChatInterface() {
 
         const data = await response.json();
         const concept: ConceptData = data.concept;
+        console.log("LEARNED CONCEPT", concept);
 
         // Store locally
         storeConcept(concept);
