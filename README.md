@@ -1,73 +1,97 @@
-# Welcome to your Lovable project
+# EduCache
+### Offline-First AI Learning Infrastructure for Bharat
 
-## Project info
+EduCache is an AI-powered offline-first learning system designed for low-connectivity regions.  
+It extracts knowledge once using cloud AI, stores it as structured semantic data, and enables fully offline reasoning without requiring an embedded LLM.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Built for Bharat-scale constraints.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Problem
 
-**Use Lovable**
+Students in rural and low-connectivity areas lose learning continuity when the internet fails.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Existing EdTech solutions:
+- Require constant internet
+- Depend on heavy video/PDF downloads
+- Stop functioning offline
+- Cache static content (GBs of storage)
+- Offer no distributed learning capability
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Solution
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+EduCache stores **logic, not content**.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Instead of caching videos or PDFs, EduCache:
+- Uses AI once to extract structured knowledge
+- Stores concepts as compact semantic JSON objects
+- Reconstructs answers offline using rule-based templates
+- Works peer-to-peer without internet
 
-Follow these steps:
+Storage comparison (1000 concepts):
+- Video cache: ~50GB  
+- EduCache: ~2MB  
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Core Architecture
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 1. AI-Powered Knowledge Extraction (Online Phase)
+- Uses OpenAI / Gemini APIs
+- Converts unstructured content into structured JSON
+- One-time extraction
+- Stored permanently on device
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### 2. Semantic Knowledge Caching
+Each concept stored as:
+```json
+{
+  "topic": "Photosynthesis",
+  "definition": "...",
+  "inputs": ["CO2", "Water", "Sunlight"],
+  "outputs": ["Glucose", "Oxygen"],
+  "analogy": "...",
+  "process_flow": [...]
+}
 ```
 
-**Edit a file directly in GitHub**
+- ~2KB per concept
+- Entire syllabus fits in MBs
+- Fast retrieval
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Supported answer modes:
 
-**Use GitHub Codespaces**
+- Concept explanation
+- Process flow
+- Analogy-based learning
+- Exam-oriented summary
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Federated Rural Swarm Mode
 
-## What technologies are used for this project?
+In zero-connectivity classrooms:
 
-This project is built with:
+- Devices form a local mesh network (Bluetooth / WiFi)
+- Students share cached concepts peer-to-peer
+- The classroom becomes a distributed knowledge base
+- Learning continues without internet access
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Use Cases
 
-## How can I deploy this project?
+- Rural schools
+- Disaster zones
+- Field training environments
+- Defense operations
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Teacher-in-the-Loop Sync
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Teachers preload the syllabus once
+- Students receive cached concepts instantly
+- Sync occurs via local file transfer or QR-based mechanism
+- Reduces repeated API calls
+- Ensures consistent structured knowledge across devices
